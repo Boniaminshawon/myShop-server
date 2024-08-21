@@ -24,24 +24,40 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
+
+    const productsCollection = client.db('myShop').collection('products');
+
+
+
+    app.get('/products', async (req, res) => {
+
+      const cursor = productsCollection.find();
+      const result = await cursor.toArray();
+      console.log(result)
+    
+      res.send(result);
+    });
+    
+    
+    
+    app.get('/', (req, res) => {
+        res.send('MyShop  is Running');
+    })
+    app.listen(port, () => {
+        console.log(`MyShop is running in port ${port}`)
+    })
+
+
+
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
-    await client.close();
+    // await client.close();
   }
 }
 run().catch(console.dir);
 
-
-
-
-app.get('/', (req, res) => {
-    res.send('MyShop  is Running');
-})
-app.listen(port, () => {
-    console.log(`MyShop is running in port ${port}`)
-})
